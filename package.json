@@ -1,0 +1,41 @@
+{
+  "name": "custom-crack",
+  "version": "1.0.0",
+  "description": "Custom Crack - wrtn crack wrapper app with UI customization",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:all": "electron-builder --win --mac"
+  },
+  "build": {
+    "appId": "com.customcrack.app",
+    "productName": "CustomCrack",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": null
+    },
+    "portable": {
+      "artifactName": "CustomCrack-${version}-Windows.exe"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": null
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}

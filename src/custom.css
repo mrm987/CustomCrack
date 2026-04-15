@@ -1,0 +1,265 @@
+/* === Custom Crack - 커스텀 CSS === */
+
+/* ── 플로팅 버튼 ── */
+#cc-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  z-index: 99999;
+  font-size: 22px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  transition: transform 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#cc-fab:hover { background: #6d28d9; transform: scale(1.1); }
+#cc-fab.open { transform: rotate(45deg); background: #ef4444; }
+#cc-fab.open:hover { background: #dc2626; }
+
+/* 버튼 숨기기 모드 */
+#cc-fab.cc-hidden-mode {
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.2s, background 0.2s;
+}
+#cc-fab.cc-hidden-mode:hover {
+  opacity: 1;
+}
+
+/* ── 메뉴 패널 ── */
+#cc-menu {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  background: #1e1e2e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 12px;
+  z-index: 99998;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  width: 220px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+}
+#cc-menu.show { display: flex; }
+
+#cc-menu .cc-section {
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 8px 2px;
+}
+
+#cc-menu button {
+  background: transparent;
+  color: #e0e0e0;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#cc-menu button:hover { background: #2a2a3e; }
+#cc-menu button.active { background: #7c3aed33; color: #a78bfa; }
+
+.cc-shortcut {
+  margin-left: auto;
+  font-size: 11px;
+  color: #aaa;
+  background: #2a2a3e;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cc-shortcut:hover {
+  background: #3a3a5e;
+  color: #fff;
+}
+
+.cc-shortcut-listening {
+  background: #7c3aed !important;
+  color: #fff !important;
+  animation: cc-blink 0.8s infinite;
+}
+
+@keyframes cc-blink {
+  50% { opacity: 0.5; }
+}
+
+/* ── 폰트 사이즈 컨트롤 ── */
+#cc-font-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+}
+#cc-font-controls button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  text-align: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+}
+#cc-font-size-label {
+  color: #aaa;
+  font-size: 13px;
+  min-width: 45px;
+  text-align: center;
+}
+
+/* ── 채팅 너비 컨트롤 ── */
+#cc-width-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+}
+#cc-width-controls button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  text-align: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+}
+#cc-width-label {
+  color: #aaa;
+  font-size: 13px;
+  min-width: 45px;
+  text-align: center;
+}
+
+/* ── 테마 토글 ── */
+#cc-theme-toggle,
+#cc-codeblock-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+}
+
+.cc-theme-label {
+  color: #aaa;
+  font-size: 13px;
+}
+
+.cc-toggle-track {
+  display: flex;
+  background: #2a2a3e;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.cc-toggle-btn {
+  width: 40px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  text-align: center !important;
+  justify-content: center !important;
+  font-size: 15px !important;
+  border-radius: 0 !important;
+  opacity: 0.4;
+  transition: opacity 0.15s, background 0.15s !important;
+}
+
+.cc-toggle-btn.active {
+  opacity: 1;
+  background: #7c3aed44 !important;
+}
+
+/* ── 코드블록(상태창) 보더리스 ── */
+
+body.cc-codeblock-clean main pre [class*="header"],
+body.cc-codeblock-clean main pre [class*="Header"],
+body.cc-codeblock-clean main [class*="code"] > div:first-child:not(pre) {
+  display: none !important;
+}
+
+body.cc-codeblock-clean main pre {
+  border: none !important;
+  border-radius: 12px !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  padding: 14px 18px !important;
+  margin: 6px 0 !important;
+}
+
+body.cc-codeblock-clean[data-theme="dark"] main pre {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.cc-codeblock-clean main pre code {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ── 몰입모드 ── */
+
+/* 1. 상단 헤더 숨기기 (라이트 + 다크) */
+body.cc-immersive .css-9gj46x,
+body.cc-immersive .css-7238to {
+  display: none !important;
+}
+
+/* 2. 좌측 사이드바 숨기기 (라이트 + 다크) */
+body.cc-immersive .css-17jcfrp,
+body.cc-immersive .css-1wa3r62 {
+  display: none !important;
+}
+
+/* 3. 서브 헤더 숨기기 */
+body.cc-immersive main .absolute.top-0.left-0 {
+  display: none !important;
+}
+
+/* 전체 컨테이너: 헤더 공간 제거 (라이트 + 다크) */
+body.cc-immersive #__next,
+body.cc-immersive .css-167egpz,
+body.cc-immersive .css-1gox4e6,
+body.cc-immersive .css-swctim,
+body.cc-immersive main.css-1c5w7et {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  top: 0 !important;
+}
+
+body.cc-immersive .css-167egpz,
+body.cc-immersive .css-1gox4e6 {
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body.cc-immersive .css-swctim {
+  height: 100vh !important;
+  flex: 1 !important;
+}
+
+body.cc-immersive main.css-1c5w7et {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 !important;
+}
