@@ -132,18 +132,18 @@ for (let y = 0; y < SIZE; y++) {
       pixels[idx + 3] = 255;
 
       // "CC" — 둥근 C 2개, 겹치게 (검정)
-      const c1x = SIZE / 2 - 33;
-      const c1y = SIZE / 2 - 30;
-      const c2x = SIZE / 2 + 37;
-      const c2y = SIZE / 2 + 30;
+      const c1x = SIZE / 2 - 28;
+      const c1y = SIZE / 2 - 25;
+      const c2x = SIZE / 2 + 32;
+      const c2y = SIZE / 2 + 25;
 
       const d1 = Math.hypot(x - c1x, y - c1y);
       const a1 = Math.atan2(y - c1y, x - c1x);
       const d2 = Math.hypot(x - c2x, y - c2y);
       const a2 = Math.atan2(y - c2y, x - c2x);
 
-      const isC2 = d2 > 31 && d2 < 62 && (a2 < -0.5 || a2 > 0.5);
-      const isC1 = d1 > 31 && d1 < 62 && (a1 < -0.5 || a1 > 0.5);
+      const isC2 = d2 > 26 && d2 < 52 && (a2 < -0.5 || a2 > 0.5);
+      const isC1 = d1 > 26 && d1 < 52 && (a1 < -0.5 || a1 > 0.5);
 
       if (isC1 || isC2) {
         pixels[idx] = 0;

@@ -11,7 +11,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
-    title: 'CC',
+    title: 'C.Crack',
     icon: iconPath,
     frame: false,
     titleBarStyle: 'hidden',
