@@ -74,6 +74,12 @@
   align-items: center;
   gap: 8px;
 }
+.cc-icon {
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
 #cc-menu button:hover { background: #2a2a3e; }
 #cc-menu button.active { background: #7c3aed33; color: #a78bfa; }
 

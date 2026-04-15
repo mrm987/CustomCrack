@@ -19,6 +19,7 @@
     'cc-hide-fab': { ctrl: false, shift: false, alt: false, key: 'F9' },
     'cc-usernote': { ctrl: false, shift: false, alt: false, key: 'F8' },
     'cc-chatprofile': { ctrl: false, shift: false, alt: false, key: 'F7' },
+    'cc-summary-memory': { ctrl: false, shift: false, alt: false, key: 'F6' },
   };
   let shortcuts = JSON.parse(JSON.stringify(defaultShortcuts));
 
@@ -43,14 +44,14 @@
   menu.id = 'cc-menu';
   menu.innerHTML = `
     <div class="cc-section">화면</div>
-    <button id="cc-fullscreen"><span>⛶ 전체화면</span><span class="cc-shortcut">F11</span></button>
-    <button id="cc-immersive"><span>👁 몰입모드</span><span class="cc-shortcut">F10</span></button>
-    <button id="cc-hide-fab"><span>👻 버튼 숨기기</span><span class="cc-shortcut">F9</span></button>
+    <button id="cc-fullscreen"><span class="cc-icon">⛶</span><span>전체화면</span><span class="cc-shortcut">F11</span></button>
+    <button id="cc-immersive"><span class="cc-icon">👁</span><span>몰입모드</span><span class="cc-shortcut">F10</span></button>
+    <button id="cc-hide-fab"><span class="cc-icon">👻</span><span>버튼 숨기기</span><span class="cc-shortcut">F9</span></button>
     <div id="cc-codeblock-toggle">
       <span class="cc-theme-label">상태창</span>
       <div class="cc-toggle-track">
-        <button id="cc-codeblock-default" class="cc-toggle-btn" title="기본">▦</button>
-        <button id="cc-codeblock-clean" class="cc-toggle-btn" title="클린">▢</button>
+        <button id="cc-codeblock-default" class="cc-toggle-btn" title="기본"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="1" y1="4.5" x2="13" y2="4.5" stroke="currentColor" stroke-width="1.3"/></svg></button>
+        <button id="cc-codeblock-clean" class="cc-toggle-btn" title="클린"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
       </div>
     </div>
     <div id="cc-theme-toggle">
@@ -62,9 +63,10 @@
     </div>
 
     <div class="cc-section">편의 기능</div>
-    <button id="cc-usernote"><span>📝 유저노트</span><span class="cc-shortcut">F8</span></button>
-    <button id="cc-chatprofile"><span>👤 대화 프로필</span><span class="cc-shortcut">F7</span></button>
-    <button id="cc-cracker-toggle">🪙 크래커 표시</button>
+    <button id="cc-usernote"><span class="cc-icon">📝</span><span>유저노트</span><span class="cc-shortcut">F8</span></button>
+    <button id="cc-chatprofile"><span class="cc-icon">👤</span><span>대화 프로필</span><span class="cc-shortcut">F7</span></button>
+    <button id="cc-summary-memory"><span class="cc-icon">🧠</span><span>요약 메모리</span><span class="cc-shortcut">F6</span></button>
+    <button id="cc-cracker-toggle"><span class="cc-icon">🪙</span><span>크래커 표시</span></button>
 
     <div class="cc-section">채팅 너비</div>
     <div id="cc-width-controls">
@@ -120,7 +122,7 @@
 
   window.customCrack?.onFullscreenChange((isFullscreen) => {
     const btn = document.getElementById('cc-fullscreen');
-    btn.querySelector('span:first-child').textContent = isFullscreen ? '⛶ 전체화면 해제' : '⛶ 전체화면';
+    btn.querySelectorAll('span')[1].textContent = isFullscreen ? '전체화면 해제' : '전체화면';
     btn.classList.toggle('active', isFullscreen);
   });
 
@@ -129,7 +131,7 @@
     const btn = document.getElementById('cc-immersive');
     isImmersive = !isImmersive;
     document.body.classList.toggle('cc-immersive', isImmersive);
-    btn.querySelector('span:first-child').textContent = isImmersive ? '👁 몰입모드 해제' : '👁 몰입모드';
+    btn.querySelectorAll('span')[1].textContent = isImmersive ? '몰입모드 해제' : '몰입모드';
     btn.classList.toggle('active', isImmersive);
 
     saveSettings();
@@ -302,12 +304,17 @@
     clickPanelButton('대화 프로필');
   });
 
+  // ── 요약 메모리 ──
+  document.getElementById('cc-summary-memory').addEventListener('click', () => {
+    clickPanelButton('요약 메모리');
+  });
+
   // ── 버튼 숨기기 ──
   document.getElementById('cc-hide-fab').addEventListener('click', () => {
     const btn = document.getElementById('cc-hide-fab');
     isFabHidden = !isFabHidden;
     fab.classList.toggle('cc-hidden-mode', isFabHidden);
-    btn.querySelector('span:first-child').textContent = isFabHidden ? '👻 버튼 표시' : '👻 버튼 숨기기';
+    btn.querySelectorAll('span')[1].textContent = isFabHidden ? '버튼 표시' : '버튼 숨기기';
     btn.classList.toggle('active', isFabHidden);
     saveSettings();
   });
@@ -477,13 +484,13 @@
         if (s.immersive) {
           isImmersive = true;
           document.body.classList.add('cc-immersive');
-          document.getElementById('cc-immersive').querySelector('span:first-child').textContent = '👁 몰입모드 해제';
+          document.getElementById('cc-immersive').querySelectorAll('span')[1].textContent = '몰입모드 해제';
           document.getElementById('cc-immersive').classList.add('active');
         }
         if (s.fabHidden) {
           isFabHidden = true;
           fab.classList.add('cc-hidden-mode');
-          document.getElementById('cc-hide-fab').querySelector('span:first-child').textContent = '👻 버튼 표시';
+          document.getElementById('cc-hide-fab').querySelectorAll('span')[1].textContent = '버튼 표시';
           document.getElementById('cc-hide-fab').classList.add('active');
         }
         if (s.codeblockClean) {
