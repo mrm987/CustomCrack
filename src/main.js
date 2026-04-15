@@ -129,6 +129,9 @@ if (!gotLock) {
   });
 }
 
+// 캐시 용량 제한 (500MB)
+app.commandLine.appendSwitch('disk-cache-size', String(500 * 1024 * 1024));
+
 // Ctrl+Shift+R: 커스텀 CSS/JS 핫 리로드 (페이지 새로고침 없이 재주입)
 app.whenReady().then(() => {
   createWindow();

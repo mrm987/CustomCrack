@@ -26,9 +26,10 @@ jobs:
       - name: Build Electron app
         run: npx electron-builder --win --publish never
 
-      - name: Create ZIP
+      - name: Add README and create ZIP
         shell: pwsh
         run: |
+          Copy-Item "README.md" -Destination "release/win-unpacked/"
           Compress-Archive -Path "release/win-unpacked/*" -DestinationPath "CustomCrack-Windows.zip"
 
       - name: Upload Release Assets
