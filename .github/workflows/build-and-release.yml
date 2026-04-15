@@ -26,11 +26,16 @@ jobs:
       - name: Build Electron app
         run: npx electron-builder --win --publish never
 
+      - name: Create ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "release/win-unpacked/*" -DestinationPath "CustomCrack-Windows.zip"
+
       - name: Upload Release Assets
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: release/*.exe
+          files: CustomCrack-Windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -39,5 +44,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CustomCrack-Windows
-          path: release/*.exe
+          path: CustomCrack-Windows.zip
           retention-days: 7
