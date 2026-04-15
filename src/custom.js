@@ -617,6 +617,7 @@
       main h2 { font-size: ${Math.round(px * 1.5)}px !important; }
       main h3 { font-size: ${Math.round(px * 1.25)}px !important; }
       main h4, main h5, main h6 { font-size: ${Math.round(px * 1.1)}px !important; }
+      textarea.rc-textarea { font-size: ${px}px !important; }
     `;
 
     // 스크롤 위치 복원
