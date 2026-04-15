@@ -77,5 +77,8 @@ npm start
 npm run build
 ```
 
+## 면책 조항
+이 프로젝트는 [wrtn](https://wrtn.ai/)의 공식 프로젝트가 아니며, wrtn과 어떠한 제휴 관계도 없습니다.
+
 ## 라이선스
-MIT
+[MIT](LICENSE)

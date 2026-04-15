@@ -3,3 +3,8 @@ release/
 dist/
 *.exe
 start.bat
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
