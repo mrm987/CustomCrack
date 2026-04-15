@@ -738,7 +738,7 @@
         ? input.selectionStart === 0
         : window.getSelection()?.anchorOffset === 0;
 
-      if (atTop || historyIndex >= 0) {
+      if ((atTop && !e.repeat) || historyIndex >= 0) {
         if (historyIndex < chatHistory.length - 1) {
           e.preventDefault();
           if (historyIndex === -1) currentDraft = getInputValue(input);
