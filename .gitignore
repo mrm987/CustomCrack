@@ -1,6 +1,5 @@
 node_modules/
 release/
 dist/
-package-lock.json
 *.exe
 start.bat
