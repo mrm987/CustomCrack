@@ -1,7 +1,7 @@
 # C.Crack (Custom Crack)
 
-[crack.wrtn.ai](https://crack.wrtn.ai/) 커스텀 래퍼 데스크톱 앱.  
-크랙의 UI를 개인 취향에 맞게 커스터마이징할 수 있습니다.
+[crack.wrtn.ai](https://crack.wrtn.ai/)를 데스크톱 앱 형태로 사용할 수 있게 해주는 래퍼 앱입니다.  
+어떠한 데이터도 수집하지 않으며, 크랙의 UI 편의성을 개선하고 커스터마이징할 수 있는 기능을 제공합니다.
 
 ## 설치
 
