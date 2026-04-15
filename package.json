@@ -21,21 +21,26 @@
       "target": [
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
-      "icon": null
+      "icon": "build/icon"
     },
     "portable": {
       "artifactName": "CustomCrack-${version}-Windows.exe"
     },
     "mac": {
-      "target": ["dmg"],
-      "icon": null
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon"
     }
   },
   "devDependencies": {
     "electron": "^33.0.0",
-    "electron-builder": "^25.0.0"
+    "electron-builder": "^25.0.0",
+    "png-to-ico": "^3.0.1"
   }
 }

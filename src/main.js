@@ -6,10 +6,13 @@ const CRACK_URL = 'https://crack.wrtn.ai/';
 let mainWindow;
 
 function createWindow() {
+  const iconPath = path.join(__dirname, '..', 'build', 'icon.png');
+
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
-    title: 'Custom Crack',
+    title: 'CC',
+    icon: iconPath,
     frame: false,
     titleBarStyle: 'hidden',
     autoHideMenuBar: true,
@@ -21,6 +24,11 @@ function createWindow() {
   });
 
   mainWindow.loadURL(CRACK_URL);
+
+  // 웹페이지가 타이틀을 변경해도 CC 유지
+  mainWindow.on('page-title-updated', (e) => {
+    e.preventDefault();
+  });
 
   // 페이지 로드 완료 시 커스텀 CSS/JS 주입
   mainWindow.webContents.on('did-finish-load', () => {
