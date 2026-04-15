@@ -4,6 +4,11 @@
   // 중복 실행 방지
   if (document.getElementById('cc-fab')) return;
 
+  // Mac 플랫폼 감지 → CSS 클래스 부여
+  if (window.customCrack?.platform === 'darwin') {
+    document.body.classList.add('cc-mac');
+  }
+
   // ── 상태 ──
   let fontSize = 100;
   let isImmersive = false;
@@ -138,6 +143,9 @@
     document.body.classList.toggle('cc-immersive', isImmersive);
     btn.querySelectorAll('span')[1].textContent = isImmersive ? '몰입모드 해제' : '몰입모드';
     btn.classList.toggle('active', isImmersive);
+
+    // Mac: 몰입모드 시 트래픽 라이트 숨기기
+    window.customCrack?.setTrafficLightsVisible(!isImmersive);
 
     saveSettings();
   });

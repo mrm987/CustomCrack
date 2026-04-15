@@ -8,13 +8,16 @@ let mainWindow;
 function createWindow() {
   const iconPath = path.join(__dirname, '..', 'build', 'icon.png');
 
+  const isMac = process.platform === 'darwin';
+
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
     title: 'C.Crack',
     icon: iconPath,
     frame: false,
-    titleBarStyle: 'hidden',
+    titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
+    trafficLightPosition: isMac ? { x: 12, y: 12 } : undefined,
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -72,6 +75,11 @@ function createWindow() {
   ipcMain.on('window-close', () => mainWindow.close());
   ipcMain.on('window-fullscreen', () => {
     mainWindow.setFullScreen(!mainWindow.isFullScreen());
+  });
+  ipcMain.on('traffic-lights-visible', (_, visible) => {
+    if (isMac) {
+      mainWindow.setWindowButtonVisibility(visible);
+    }
   });
 
   // 최대화/전체화면 상태 변경 시 렌더러에 개별 알림
@@ -146,7 +154,11 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  app.quit();
+  if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
 app.on('will-quit', () => {

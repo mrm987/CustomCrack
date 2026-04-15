@@ -3,6 +3,8 @@
 (function () {
   if (document.getElementById('cc-window-buttons')) return;
 
+  const isMac = window.customCrack?.platform === 'darwin';
+
   // 크랙 헤더의 내부 컨테이너 찾기 (테마 불문)
   const header = document.querySelector('.css-9gj46x') || document.querySelector('.css-7238to');
   const headerInner = header?.querySelector('.relative.h-full');
@@ -14,7 +16,18 @@
     el.style.webkitAppRegion = 'no-drag';
   });
 
-  // 창 컨트롤 버튼을 헤더 내부에 삽입
+  // Mac: 네이티브 트래픽 라이트 사용, 좌측 여백만 확보
+  if (isMac) {
+    headerInner.style.paddingLeft = '72px';
+    // 더미 요소로 중복 주입 방지
+    const dummy = document.createElement('div');
+    dummy.id = 'cc-window-buttons';
+    dummy.style.display = 'none';
+    headerInner.appendChild(dummy);
+    return;
+  }
+
+  // Windows/Linux: 창 컨트롤 버튼을 헤더 내부에 삽입
   const buttons = document.createElement('div');
   buttons.id = 'cc-window-buttons';
   buttons.innerHTML = `

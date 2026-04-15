@@ -222,6 +222,12 @@ body.cc-codeblock-clean main pre code {
   border: none !important;
 }
 
+/* ── Mac 트래픽 라이트 영역 보정 ── */
+body.cc-mac .css-9gj46x .relative.h-full,
+body.cc-mac .css-7238to .relative.h-full {
+  padding-left: 72px !important;
+}
+
 /* ── 몰입모드 ── */
 
 /* 1. 상단 헤더 숨기기 (라이트 + 다크) */
