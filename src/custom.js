@@ -679,5 +679,90 @@
   applyChatWidth();
   updateCodeblockUI();
 
+  // ── 채팅 히스토리 (방향키 위/아래) ──
+  const chatHistory = JSON.parse(localStorage.getItem('cc-chat-history') || '[]');
+  let historyIndex = -1;
+  let currentDraft = '';
+  const MAX_HISTORY = 100;
+
+  function getChatInput() {
+    return document.querySelector('textarea') ||
+      document.querySelector('[contenteditable="true"]');
+  }
+
+  function getInputValue(el) {
+    return el.tagName === 'TEXTAREA' ? el.value : el.textContent;
+  }
+
+  function setInputValue(el, val) {
+    if (el.tagName === 'TEXTAREA') {
+      // React 호환: native setter로 값 변경
+      const nativeSetter = Object.getOwnPropertyDescriptor(
+        HTMLTextAreaElement.prototype, 'value'
+      ).set;
+      nativeSetter.call(el, val);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+      el.textContent = val;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    // 커서를 끝으로
+    setTimeout(() => {
+      el.selectionStart = el.selectionEnd = val.length;
+    }, 0);
+  }
+
+  // 전송 감지: Enter 키 (Shift 없이) 또는 전송 버튼 클릭
+  document.addEventListener('keydown', (e) => {
+    const input = getChatInput();
+    if (!input || document.activeElement !== input) return;
+
+    if (e.key === 'Enter' && !e.shiftKey) {
+      const text = getInputValue(input).trim();
+      if (text) {
+        // 중복 방지 (직전과 동일하면 저장 안 함)
+        if (chatHistory[0] !== text) {
+          chatHistory.unshift(text);
+          if (chatHistory.length > MAX_HISTORY) chatHistory.pop();
+          localStorage.setItem('cc-chat-history', JSON.stringify(chatHistory));
+        }
+        historyIndex = -1;
+        currentDraft = '';
+      }
+      return;
+    }
+
+    // 방향키 위: 이전 메시지
+    if (e.key === 'ArrowUp') {
+      const val = getInputValue(input);
+      // 입력란이 비어있거나 히스토리 탐색 중일 때만 작동
+      if (val.trim() === '' || historyIndex >= 0) {
+        if (historyIndex < chatHistory.length - 1) {
+          e.preventDefault();
+          if (historyIndex === -1) currentDraft = val;
+          historyIndex++;
+          setInputValue(input, chatHistory[historyIndex]);
+        }
+      }
+    }
+
+    // 방향키 아래: 다음 메시지
+    if (e.key === 'ArrowDown' && historyIndex >= 0) {
+      e.preventDefault();
+      historyIndex--;
+      if (historyIndex < 0) {
+        setInputValue(input, currentDraft);
+      } else {
+        setInputValue(input, chatHistory[historyIndex]);
+      }
+    }
+
+    // ESC: 히스토리 탐색 취소
+    if (e.key === 'Escape' && historyIndex >= 0) {
+      historyIndex = -1;
+      setInputValue(input, currentDraft);
+    }
+  }, true);
+
   console.log('[CustomCrack] 커스텀 UI 로드 완료');
 })();
