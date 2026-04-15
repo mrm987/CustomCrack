@@ -3,3 +3,4 @@ release/
 dist/
 package-lock.json
 *.exe
+start.bat

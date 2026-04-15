@@ -12,15 +12,31 @@
   let isCodeblockClean = false;
   let isCrackerShow = false;
 
-  // 단축키 매핑 (버튼ID → 키)
+  // 단축키 매핑 (버튼ID → {ctrl, shift, alt, key})
   const defaultShortcuts = {
-    'cc-fullscreen': 'F11',
-    'cc-immersive': 'F10',
-    'cc-hide-fab': 'F9',
-    'cc-usernote': 'F8',
-    'cc-chatprofile': 'F7',
+    'cc-fullscreen': { ctrl: false, shift: false, alt: false, key: 'F11' },
+    'cc-immersive': { ctrl: false, shift: false, alt: false, key: 'F10' },
+    'cc-hide-fab': { ctrl: false, shift: false, alt: false, key: 'F9' },
+    'cc-usernote': { ctrl: false, shift: false, alt: false, key: 'F8' },
+    'cc-chatprofile': { ctrl: false, shift: false, alt: false, key: 'F7' },
   };
-  let shortcuts = { ...defaultShortcuts };
+  let shortcuts = JSON.parse(JSON.stringify(defaultShortcuts));
+
+  function formatShortcut(s) {
+    const parts = [];
+    if (s.ctrl) parts.push('Ctrl');
+    if (s.shift) parts.push('Shift');
+    if (s.alt) parts.push('Alt');
+    parts.push(s.key);
+    return parts.join('+');
+  }
+
+  function matchShortcut(e, s) {
+    return e.key === s.key &&
+      e.ctrlKey === s.ctrl &&
+      e.shiftKey === s.shift &&
+      e.altKey === s.alt;
+  }
 
   // ── 메뉴 패널 ──
   const menu = document.createElement('div');
@@ -123,15 +139,41 @@
   let isListeningForKey = null; // 키 변경 대기 중인 버튼 ID
 
   document.addEventListener('keydown', (e) => {
+    // Ctrl/Shift/Alt 단독 입력은 무시
+    if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return;
+
     // 키 변경 대기 중이면 새 키 할당
     if (isListeningForKey) {
       e.preventDefault();
       const btnId = isListeningForKey;
+      const newSc = {
+        ctrl: e.ctrlKey,
+        shift: e.shiftKey,
+        alt: e.altKey,
+        key: e.key,
+      };
+
+      // 중복 확인
+      for (const [otherId, sc] of Object.entries(shortcuts)) {
+        if (otherId !== btnId && sc.key === newSc.key && sc.ctrl === newSc.ctrl && sc.shift === newSc.shift && sc.alt === newSc.alt) {
+          const label = document.querySelector(`#${btnId} .cc-shortcut`);
+          if (label) {
+            label.textContent = '중복!';
+            setTimeout(() => {
+              label.textContent = formatShortcut(shortcuts[btnId]);
+              label.classList.remove('cc-shortcut-listening');
+            }, 800);
+          }
+          isListeningForKey = null;
+          return;
+        }
+      }
+
       isListeningForKey = null;
-      shortcuts[btnId] = e.key;
+      shortcuts[btnId] = newSc;
       const label = document.querySelector(`#${btnId} .cc-shortcut`);
       if (label) {
-        label.textContent = e.key;
+        label.textContent = formatShortcut(newSc);
         label.classList.remove('cc-shortcut-listening');
       }
       saveSettings();
@@ -139,8 +181,8 @@
     }
 
     // 단축키 실행
-    for (const [btnId, key] of Object.entries(shortcuts)) {
-      if (e.key === key) {
+    for (const [btnId, sc] of Object.entries(shortcuts)) {
+      if (matchShortcut(e, sc)) {
         e.preventDefault();
         document.getElementById(btnId)?.click();
         return;
@@ -448,11 +490,17 @@
           isCodeblockClean = true;
         }
         if (s.shortcuts) {
-          shortcuts = { ...defaultShortcuts, ...s.shortcuts };
-          // 라벨 업데이트
-          for (const [btnId, key] of Object.entries(shortcuts)) {
+          // 이전 형식(문자열)과 새 형식(객체) 모두 지원
+          for (const [btnId, val] of Object.entries(s.shortcuts)) {
+            if (typeof val === 'string') {
+              shortcuts[btnId] = { ctrl: false, shift: false, alt: false, key: val };
+            } else if (val && val.key) {
+              shortcuts[btnId] = val;
+            }
+          }
+          for (const [btnId, sc] of Object.entries(shortcuts)) {
             const label = document.querySelector(`#${btnId} .cc-shortcut`);
-            if (label) label.textContent = key;
+            if (label) label.textContent = formatShortcut(sc);
           }
         }
         if (s.crackerShow) {
