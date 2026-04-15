@@ -29,7 +29,7 @@
       "icon": "build/icon"
     },
     "portable": {
-      "artifactName": "CustomCrack-${version}-Windows.exe"
+      "artifactName": "CustomCrack.exe"
     },
     "mac": {
       "target": [

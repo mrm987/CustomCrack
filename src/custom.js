@@ -732,28 +732,37 @@
       return;
     }
 
-    // 방향키 위: 이전 메시지
+    // 방향키 위: 커서가 맨 앞일 때 이전 메시지
     if (e.key === 'ArrowUp') {
-      const val = getInputValue(input);
-      // 입력란이 비어있거나 히스토리 탐색 중일 때만 작동
-      if (val.trim() === '' || historyIndex >= 0) {
+      const atTop = input.tagName === 'TEXTAREA'
+        ? input.selectionStart === 0
+        : window.getSelection()?.anchorOffset === 0;
+
+      if (atTop || historyIndex >= 0) {
         if (historyIndex < chatHistory.length - 1) {
           e.preventDefault();
-          if (historyIndex === -1) currentDraft = val;
+          if (historyIndex === -1) currentDraft = getInputValue(input);
           historyIndex++;
           setInputValue(input, chatHistory[historyIndex]);
         }
       }
     }
 
-    // 방향키 아래: 다음 메시지
+    // 방향키 아래: 커서가 맨 뒤일 때 다음 메시지
     if (e.key === 'ArrowDown' && historyIndex >= 0) {
-      e.preventDefault();
-      historyIndex--;
-      if (historyIndex < 0) {
-        setInputValue(input, currentDraft);
-      } else {
-        setInputValue(input, chatHistory[historyIndex]);
+      const val = getInputValue(input);
+      const atBottom = input.tagName === 'TEXTAREA'
+        ? input.selectionStart === val.length
+        : window.getSelection()?.anchorOffset === (input.textContent || '').length;
+
+      if (atBottom) {
+        e.preventDefault();
+        historyIndex--;
+        if (historyIndex < 0) {
+          setInputValue(input, currentDraft);
+        } else {
+          setInputValue(input, chatHistory[historyIndex]);
+        }
       }
     }
 
