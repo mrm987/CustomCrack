@@ -5,6 +5,23 @@ const fs = require('fs');
 const CRACK_URL = 'https://crack.wrtn.ai/';
 let mainWindow;
 
+// 파일 내용을 메모리에 캐싱 (매 네비게이션마다 디스크 I/O 방지)
+const fileCache = {};
+function readCached(filePath) {
+  if (!fileCache[filePath] || fileCache[filePath].mtime !== fs.statSync(filePath, { throwIfNoEntry: false })?.mtimeMs) {
+    try {
+      const stat = fs.statSync(filePath);
+      fileCache[filePath] = { content: fs.readFileSync(filePath, 'utf-8'), mtime: stat.mtimeMs };
+    } catch { return ''; }
+  }
+  return fileCache[filePath].content;
+}
+
+// Ctrl+Shift+R 핫 리로드 시 캐시 무효화
+function invalidateCache() {
+  for (const key of Object.keys(fileCache)) delete fileCache[key];
+}
+
 function createWindow() {
   const iconPath = path.join(__dirname, '..', 'build', 'icon.png');
 
@@ -19,6 +36,7 @@ function createWindow() {
     titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
     trafficLightPosition: isMac ? { x: 12, y: 12 } : undefined,
     autoHideMenuBar: true,
+    backgroundColor: '#1e1e2e',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -40,11 +58,15 @@ function createWindow() {
     injectTitleBar();
   });
 
-  // SPA 내부 네비게이션에도 재주입
+  // SPA 내부 네비게이션에도 재주입 (디바운스)
+  let navTimer = null;
   mainWindow.webContents.on('did-navigate-in-page', () => {
-    injectCustomStyles();
-    injectCustomScript();
-    injectTitleBar();
+    if (navTimer) clearTimeout(navTimer);
+    navTimer = setTimeout(() => {
+      injectCustomStyles();
+      injectCustomScript();
+      injectTitleBar();
+    }, 150);
   });
 
   // 단축키
@@ -97,19 +119,26 @@ function createWindow() {
   });
 }
 
+let lastCssKey = null;
+
 function injectCustomStyles() {
   const cssPath = path.join(__dirname, 'custom.css');
-  if (!fs.existsSync(cssPath)) return;
-  const css = fs.readFileSync(cssPath, 'utf-8');
+  const css = readCached(cssPath);
   if (!css.trim()) return;
 
-  mainWindow.webContents.insertCSS(css).catch(() => {});
+  // 이전 CSS 제거 후 재삽입 (스타일 누적 방지)
+  const removeOld = lastCssKey
+    ? mainWindow.webContents.removeInsertedCSS(lastCssKey).catch(() => {})
+    : Promise.resolve();
+
+  removeOld.then(() => {
+    mainWindow.webContents.insertCSS(css).then(key => { lastCssKey = key; }).catch(() => {});
+  });
 }
 
 function injectCustomScript() {
   const jsPath = path.join(__dirname, 'custom.js');
-  if (!fs.existsSync(jsPath)) return;
-  const js = fs.readFileSync(jsPath, 'utf-8');
+  const js = readCached(jsPath);
   if (!js.trim()) return;
 
   mainWindow.webContents.executeJavaScript(js).catch(() => {});
@@ -117,8 +146,7 @@ function injectCustomScript() {
 
 function injectTitleBar() {
   const jsPath = path.join(__dirname, 'titlebar.js');
-  if (!fs.existsSync(jsPath)) return;
-  const js = fs.readFileSync(jsPath, 'utf-8');
+  const js = readCached(jsPath);
   if (!js.trim()) return;
 
   mainWindow.webContents.executeJavaScript(js).catch(() => {});
@@ -140,12 +168,18 @@ if (!gotLock) {
 // 캐시 용량 제한 (500MB)
 app.commandLine.appendSwitch('disk-cache-size', String(500 * 1024 * 1024));
 
+// GPU 가속 & 렌더링 최적화
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+
 // Ctrl+Shift+R: 커스텀 CSS/JS 핫 리로드 (페이지 새로고침 없이 재주입)
 app.whenReady().then(() => {
   createWindow();
 
   globalShortcut.register('CommandOrControl+Shift+R', () => {
     if (mainWindow) {
+      invalidateCache();
       injectCustomStyles();
       injectCustomScript();
       injectTitleBar();

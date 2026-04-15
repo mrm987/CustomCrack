@@ -460,10 +460,11 @@
       chatSendObserver = new MutationObserver(() => {
         if (isCrackerShow) {
           clearTimeout(chatSendTimeout);
-          chatSendTimeout = setTimeout(fetchCrackerCount, 1000);
+          chatSendTimeout = setTimeout(fetchCrackerCount, 3000);
         }
       });
-      chatSendObserver.observe(chatArea, { childList: true, subtree: true });
+      // subtree 대신 직계 자식만 감시 (스트리밍 중 과도한 발화 방지)
+      chatSendObserver.observe(chatArea, { childList: true, subtree: false });
     }
   }
 
@@ -584,16 +585,19 @@
   const label = document.getElementById('cc-font-size-label');
   const FONT_STYLE_ID = 'cc-font-style';
 
+  let cachedScrollContainer = null;
   function getScrollContainer() {
+    // 캐시가 유효한지 확인 (DOM에서 제거되지 않았는지)
+    if (cachedScrollContainer && cachedScrollContainer.isConnected && cachedScrollContainer.scrollHeight > cachedScrollContainer.clientHeight) {
+      return cachedScrollContainer;
+    }
     // 채팅 스크롤 컨테이너 찾기
     const candidates = document.querySelectorAll('main div[class*="overflow"]');
     for (const el of candidates) {
-      if (el.scrollHeight > el.clientHeight) return el;
-    }
-    // fallback: main 내부에서 스크롤 가능한 첫 번째 요소
-    const all = document.querySelectorAll('main *');
-    for (const el of all) {
-      if (el.scrollHeight > el.clientHeight + 10 && getComputedStyle(el).overflowY !== 'visible') return el;
+      if (el.scrollHeight > el.clientHeight) {
+        cachedScrollContainer = el;
+        return el;
+      }
     }
     return document.documentElement;
   }
