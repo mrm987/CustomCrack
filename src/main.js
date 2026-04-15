@@ -116,6 +116,19 @@ function injectTitleBar() {
   mainWindow.webContents.executeJavaScript(js).catch(() => {});
 }
 
+// 중복 실행 방지
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
 // Ctrl+Shift+R: 커스텀 CSS/JS 핫 리로드 (페이지 새로고침 없이 재주입)
 app.whenReady().then(() => {
   createWindow();
