@@ -1,5 +1,5 @@
 // CustomCrack 아이콘 생성 스크립트
-// 256x256 PNG → ICO 변환
+// 512x512 PNG → ICO 변환
 
 const fs = require('fs');
 const path = require('path');
@@ -91,7 +91,7 @@ function createPNG(width, height, pixels) {
 }
 
 // 아이콘 디자인: 보라색 둥근 사각형 + C⚙ 심볼
-const SIZE = 256;
+const SIZE = 512;
 const pixels = new Uint8Array(SIZE * SIZE * 4);
 
 for (let y = 0; y < SIZE; y++) {
@@ -99,8 +99,8 @@ for (let y = 0; y < SIZE; y++) {
     const idx = (y * SIZE + x) * 4;
 
     // 둥근 사각형 배경
-    const margin = 16;
-    const radius = 48;
+    const margin = 32;
+    const radius = 96;
     const inX = x >= margin && x < SIZE - margin;
     const inY = y >= margin && y < SIZE - margin;
 
@@ -132,18 +132,18 @@ for (let y = 0; y < SIZE; y++) {
       pixels[idx + 3] = 255;
 
       // "CC" — 둥근 C 2개, 겹치게 (검정)
-      const c1x = SIZE / 2 - 28;
-      const c1y = SIZE / 2 - 25;
-      const c2x = SIZE / 2 + 32;
-      const c2y = SIZE / 2 + 25;
+      const c1x = SIZE / 2 - 56;
+      const c1y = SIZE / 2 - 50;
+      const c2x = SIZE / 2 + 64;
+      const c2y = SIZE / 2 + 50;
 
       const d1 = Math.hypot(x - c1x, y - c1y);
       const a1 = Math.atan2(y - c1y, x - c1x);
       const d2 = Math.hypot(x - c2x, y - c2y);
       const a2 = Math.atan2(y - c2y, x - c2x);
 
-      const isC2 = d2 > 26 && d2 < 52 && (a2 < -0.5 || a2 > 0.5);
-      const isC1 = d1 > 26 && d1 < 52 && (a1 < -0.5 || a1 > 0.5);
+      const isC2 = d2 > 52 && d2 < 104 && (a2 < -0.5 || a2 > 0.5);
+      const isC1 = d1 > 52 && d1 < 104 && (a1 < -0.5 || a1 > 0.5);
 
       if (isC1 || isC2) {
         pixels[idx] = 0;
