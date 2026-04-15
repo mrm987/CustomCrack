@@ -86,6 +86,11 @@
   `;
   document.body.appendChild(menu);
 
+  // ── 몰입모드 드래그 바 ──
+  const dragBar = document.createElement('div');
+  dragBar.id = 'cc-immersive-drag';
+  document.body.appendChild(dragBar);
+
   // ── 플로팅 버튼 ──
   const fab = document.createElement('button');
   fab.id = 'cc-fab';
@@ -467,7 +472,6 @@
     localStorage.setItem('cc-settings', JSON.stringify({
       fontSize,
       chatWidth,
-      immersive: isImmersive,
       fabHidden: isFabHidden,
       codeblockClean: isCodeblockClean,
       crackerShow: isCrackerShow,
@@ -481,12 +485,6 @@
       if (s) {
         fontSize = s.fontSize ?? 100;
         chatWidth = s.chatWidth ?? 100;
-        if (s.immersive) {
-          isImmersive = true;
-          document.body.classList.add('cc-immersive');
-          document.getElementById('cc-immersive').querySelectorAll('span')[1].textContent = '몰입모드 해제';
-          document.getElementById('cc-immersive').classList.add('active');
-        }
         if (s.fabHidden) {
           isFabHidden = true;
           fab.classList.add('cc-hidden-mode');
@@ -609,7 +607,7 @@
     }
     const px = Math.round(16 * fontSize / 100);
     styleEl.textContent = `
-      main p, main span, main li, main td, main th,
+      main p, main span:not([class*="typo-text-xs"]), main li, main td, main th,
       main pre, main code, main blockquote,
       main em, main i, main strong, main b, main a {
         font-size: ${px}px !important;

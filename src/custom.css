@@ -269,3 +269,19 @@ body.cc-immersive main.css-1c5w7et {
   max-width: 100% !important;
   flex: 1 !important;
 }
+
+/* 몰입모드 드래그 바 (상단 투명 영역) */
+#cc-immersive-drag {
+  display: none;
+}
+
+body.cc-immersive #cc-immersive-drag {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 99997;
+  -webkit-app-region: drag;
+}
